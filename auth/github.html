@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>GitHub Login – Repo Studio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+    body {
+        background:#0d1117; color:#fff; font-family:Arial; 
+        display:flex; align-items:center; justify-content:center;
+        height:100vh; margin:0;
+    }
+    .card {
+        background:#161b22; padding:30px; border-radius:12px;
+        width:360px; text-align:center;
+        box-shadow:0 0 20px rgba(0,0,0,0.4);
+    }
+    button {
+        width:100%; background:#238636; color:#fff;
+        padding:12px; border-radius:8px; border:none; cursor:pointer;
+        font-size:16px;
+    }
+    button:hover { background:#2ea043; }
+    pre {
+        background:#0d1117; padding:10px; border-radius:8px;
+        white-space:pre-wrap; word-break:break-all;
+        margin-top:20px;
+    }
+</style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Login with GitHub</h2>
+    <p id="status">Start authentication.</p>
+    <button id="loginBtn">Login with GitHub</button>
+    <pre id="output" style="display:none;"></pre>
+</div>
+
+<script>
+const CLIENT_ID = "Ov23ligGBVeAb4o3uFLg";
+const REDIRECT_URI = "http://127.0.0.1:5500/client/auth/github.html";
+
+function startLogin() {
+    const url =
+        "https://github.com/login/oauth/authorize" +
+        "?response_type=code" +
+        "&client_id=" + encodeURIComponent(CLIENT_ID) +
+        "&redirect_uri=" + encodeURIComponent(REDIRECT_URI) +
+        "&scope=repo%20user";
+
+    window.location = url;
+}
+
+document.getElementById("loginBtn").onclick = startLogin;
+
+// Handle callback: look for access_token in URL fragment
+(() => {
+    const hash = new URLSearchParams(location.hash.substring(1));
+    const token = hash.get("access_token");
+    if (!token) return;
+
+    // Show the token
+    document.getElementById("output").style.display = "block";
+    document.getElementById("output").textContent = "Access Token:\n" + token;
+    document.getElementById("status").textContent = "Logged in successfully.";
+
+    fetch("https://api.github.com/user", {
+  headers: {
+    Authorization: `Bearer ${token}`,
+    Accept: "application/vnd.github+json"
+  }
+})
+.then(res => res.json())
+.then(user => {
+  console.log("User data:", user);
+  document.getElementById("status").textContent = "Hello, " + user.login + "!";
+  document.getElementById("output").style.display = "block";
+  document.getElementById("output").textContent = JSON.stringify(user, null, 2);
+})
+.catch(err => {
+  console.error("Fetch error:", err);
+  document.getElementById("status").textContent = "Failed to fetch user info.";
+});
+
+})();
+
+
+</script>
+</body>
+</html>
