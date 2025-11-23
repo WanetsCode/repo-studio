@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Repo studio 2</title>
+  <link rel="stylesheet" href="vscode.css">
+</head>
+<body>
+  <div class="vscode">
+    <div class="titlebar">Repo Studio</div>
+    <div class="workspace">
+      <div class="sidebar">
+        <div class="explorer-title">EXPLORER</div>
+        <ul class="file-tree">
+          <li>index.html</li>
+          <li>style.css</li>
+          <li>script.js</li>
+        </ul>
+      </div>
+      <div class="content">
+        <div class="tabs">
+          <div class="tab active">index.html</div>
+        </div>
+        <div id="editor" class="editor"></div>
+      </div>
+    </div>
+    <div class="statusbar"><p>Repo Studio 1.0 | Loaded Reposistory: None/None | Commiting is disabled (<i>null</i>) | <a>Preview off</a></p></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+  <script>
+    
+    require.config({ 
+      paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs" }
+    });
+    
+    require(["vs/editor/editor.main"], function () {
+      const emmetSnippets = {
+        "a": "a[href]",
+        "a:blank": "a[href='http://' target='_blank' rel='noopener noreferrer']",
+        "a:link": "a[href='http://']",
+        "a:mail": "a[href='mailto:']",
+        "a:tel": "a[href='tel:+']",
+        
+        "abbr": "abbr[title]",
+        "acronym": "acronym[title]",
+        "bdo": "bdo[dir]",
+        "bdo:r": "bdo[dir=rtl]",
+        "bdo:l": "bdo[dir=ltr]",
+        
+        "base": "base[href]/",
+        "br": "br/",
+        "hr": "hr/",
+        "col": "col/",
+        
+        "link": "link[rel=stylesheet href]/",
+        "link:css": "link[href='style.css']",
+        "link:print": "link[href='print.css' media=print]",
+        "link:favicon": "link[rel='icon' type=image/x-icon href='favicon.ico']",
+        "link:mf": "link[rel='manifest' href='manifest.json']",
+        "link:touch": "link[rel=apple-touch-icon href='favicon.png']",
+        "link:rss": "link[rel=alternate type=application/rss+xml title=RSS href='rss.xml']",
+        "link:atom": "link[rel=alternate type=application/atom+xml title=Atom href='atom.xml']",
+        "link:im": "link[rel=import href='component.html']",
+        
+        "meta": "meta/",
+        "meta:utf": "meta[http-equiv=Content-Type content='text/html;charset=UTF-8']",
+        "meta:vp": "meta[name=viewport content='width=device-width, initial-scale=1.0']",
+        "meta:compat": "meta[http-equiv=X-UA-Compatible content='IE=edge']",
+        "meta:edge": "meta[http-equiv=X-UA-Compatible content='IE=edge']",
+        "meta:redirect": "meta[http-equiv=refresh content='0; url=http://']",
+        "meta:kw": "meta[name=keywords content]",
+        "meta:desc": "meta[name=description content]",
+        
+        "style": "style",
+        "script": "script",
+        "script:src": "script[src]",
+        "script:module": "script[type=module src]",
+        
+        "img": "img[src alt]/",
+        "img:s": "img[src alt srcset]/",
+        "img:z": "img[src alt sizes srcset]/",
+        "picture": "picture",
+        "src": "source/",
+        "src:sc": "source[src type]/",
+        "src:s": "source[srcset]/",
+        "src:t": "source[srcset type]/",
+        "src:z": "source[sizes srcset]/",
+        "src:m": "source[media srcset]/",
+        "src:mt": "source[media srcset type]/",
+        "src:mz": "source[media sizes srcset]/",
+        "src:zt": "source[sizes srcset type]/",
+        
+        "iframe": "iframe[src]",
+        "embed": "embed[src type]/",
+        "object": "object[data type]",
+        "param": "param[name value]/",
+        "map": "map[name]",
+        "area": "area[shape coords href alt]/",
+        "area:d": "area[shape=default href alt]/",
+        "area:c": "area[shape=circle coords href alt]/",
+        "area:r": "area[shape=rect coords href alt]/",
+        "area:p": "area[shape=poly coords href alt]/",
+        
+        "form": "form[action]",
+        "form:get": "form[method=get]",
+        "form:post": "form[method=post]",
+        "label": "label[for]",
+        "input": "input[type=${1:text}]/",
+        "inp": "input[name type]/",
+        "input:h": "input[type=hidden name]/",
+        "input:hidden": "input[type=hidden name]/",
+        "input:t": "input[type=text name]/",
+        "input:text": "input[type=text name]/",
+        "input:search": "input[type=search name]/",
+        "input:email": "input[type=email name]/",
+        "input:url": "input[type=url name]/",
+        "input:p": "input[type=password name]/",
+        "input:password": "input[type=password name]/",
+        "input:datetime": "input[type=datetime name]/",
+        "input:date": "input[type=date name]/",
+        "input:datetime-local": "input[type=datetime-local name]/",
+        "input:month": "input[type=month name]/",
+        "input:week": "input[type=week name]/",
+        "input:time": "input[type=time name]/",
+        "input:tel": "input[type=tel name]/",
+        "input:number": "input[type=number name]/",
+        "input:color": "input[type=color name]/",
+        "input:c": "input[type=checkbox name]/",
+        "input:checkbox": "input[type=checkbox name]/",
+        "input:r": "input[type=radio name]/",
+        "input:radio": "input[type=radio name]/",
+        "input:range": "input[type=range name]/",
+        "input:f": "input[type=file name]/",
+        "input:file": "input[type=file name]/",
+        "input:s": "input[type=submit value]/",
+        "input:submit": "input[type=submit value]/",
+        "input:i": "input[type=image src alt]/",
+        "input:image": "input[type=image src alt]/",
+        "input:b": "input[type=button value]/",
+        "input:button": "input[type=button value]/",
+        "input:reset": "input[type=reset value]/",
+        "isindex": "isindex/",
+        "select": "select[name]",
+        "select:d": "select[name disabled]",
+        "opt": "option[value]",
+        "option": "option[value]",
+        "textarea": "textarea[name]",
+        "marquee": "marquee[behavior direction]",
+        "menu:c": "menu[type=context]",
+        "menu:t": "menu[type=toolbar]",
+        "video": "video[src]",
+        "audio": "audio[src]",
+        "html:xml": "html[xmlns=http://www.w3.org/1999/xhtml]",
+        
+        "btn": "button",
+        "btn:b": "button[type=button]",
+        "btn:r": "button[type=reset]",
+        "btn:s": "button[type=submit]",
+        "button": "button",
+        "button:button": "button[type=button]",
+        "button:reset": "button[type=reset]",
+        "button:submit": "button[type=submit]",
+        
+        "ol+": "ol>li",
+        "ul+": "ul>li",
+        "dl+": "dl>dt+dd",
+        "map+": "map>area",
+        "table+": "table>tr>td",
+        "colgroup+": "colgroup>col",
+        "colg+": "colgroup>col",
+        "tr+": "tr>td",
+        "select+": "select>option",
+        "optgroup+": "optgroup>option",
+        "optg+": "optgroup>option",
+        "pic+": "picture>source+img",
+        
+        "fst": "fieldset",
+        "fset": "fieldset",
+        "fieldset": "fieldset",
+        "leg": "legend",
+        "legend": "legend",
+        
+        "!": "!!!+html[lang=en]>head+body",
+        "!!!": "<!DOCTYPE html>",
+        "doc": "html[lang=en]>head+body",
+        "html:5": "!!!+html[lang=en]>head+body",
+        
+        "c": "<!--  -->",
+        "cc:ie": "<!--[if IE]><!<![endif]-->",
+        "cc:noie": "<!--[if !IE]><!--><!--<![endif]-->",
+        
+        "tbl": "table",
+        "cap": "caption",
+        "colg": "colgroup",
+        "thead": "thead",
+        "tbody": "tbody",
+        "tfoot": "tfoot",
+        "th": "th",
+        "td": "td",
+        
+        "adr": "address",
+        "art": "article",
+        "sect": "section",
+        "hdr": "header",
+        "ftr": "footer",
+        "bq": "blockquote",
+        "fig": "figure",
+        "figc": "figcaption",
+        "ifr": "iframe",
+        "emb": "embed",
+        "obj": "object",
+        "vid": "video",
+        "aud": "audio",
+        "cvs": "canvas",
+        "det": "details",
+        "sum": "summary",
+        "prog": "progress",
+        "datal": "datalist",
+        "kg": "keygen",
+        "out": "output",
+        "dia": "dialog",
+        "str": "strong",
+        "samp": "samp"
+      };
+
+      const editor = monaco.editor.create(document.getElementById("editor"), {
+        value: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<body>
+  <!-- Try ANY Emmet abbreviation - type to see suggestions! -->
+  <!-- Start typing: a, link, input, meta, img, etc. -->
+  <!-- Complex: ul>li*5, nav>ul>li*3>a, table>tr*3>td*4 -->
+  <!-- Special: !, link:css, input:email, meta:vp -->
+  
+</body>
+</html>`,
+        language: "html",
+        theme: "vs-dark",
+        automaticLayout: true,
+        fontSize: 14,
+        minimap: { enabled: false },
+        tabSize: 2,
+        quickSuggestions: {
+          other: true,
+          comments: false,
+          strings: false
+        },
+        suggestOnTriggerCharacters: true
+      });
+
+      function expandEmmet(abbreviation, depth = 0) {
+        if (depth > 10) return abbreviation;
+        
+        if (emmetSnippets[abbreviation]) {
+          const snippet = emmetSnippets[abbreviation];
+          return expandEmmet(snippet, depth + 1);
+        }
+
+        if (abbreviation.includes('+') && !abbreviation.includes('*')) {
+          if (abbreviation.startsWith('!!!+')) {
+            const parts = abbreviation.substring(4);
+            const doctype = '<!DOCTYPE html>';
+            const rest = expandEmmet(parts, depth + 1);
+            return doctype + '\n' + rest;
+          }
+          
+          const parts = abbreviation.split('+');
+          return parts.map(p => expandEmmet(p.trim(), depth + 1)).join('\n');
+        }
+
+        if (abbreviation.includes('*')) {
+          const parts = abbreviation.split('*');
+          const base = parts[0];
+          const count = parseInt(parts[1]);
+          
+          if (isNaN(count)) return abbreviation;
+          
+          let result = '';
+          for (let i = 1; i <= count; i++) {
+            const expanded = expandEmmet(base.replace(/\$/g, i), depth + 1);
+            result += expanded + '\n';
+          }
+          return result.trim();
+        }
+
+        if (abbreviation.includes('>')) {
+          const parts = abbreviation.split('>');
+          return buildNested(parts, 0, '', depth);
+        }
+
+        if (abbreviation.includes('(')) {
+          return expandGroups(abbreviation, depth);
+        }
+
+        if (abbreviation.includes('^')) {
+          return expandClimbUp(abbreviation, depth);
+        }
+
+        return expandSingle(abbreviation);
+      }
+
+      function buildNested(parts, index, indent, depth = 0) {
+        if (index >= parts.length) return '';
+        
+        const current = expandSingle(parts[index].trim());
+        
+        if (index === parts.length - 1) {
+          return indent + current;
+        }
+        
+        const match = current.match(/^(<[^>]+>)(.*)(<\/[^>]+>)$/);
+        if (match) {
+          const [, opening, content, closing] = match;
+          const nested = buildNested(parts, index + 1, indent + '  ', depth);
+          return indent + opening + '\n' + nested + '\n' + indent + closing;
+        }
+        
+        return indent + current;
+      }
+
+      function expandSingle(abbr) {
+        abbr = abbr.trim();
+
+        if (abbr === '!!!') {
+          return '<!DOCTYPE html>';
+        }
+
+
+        const textMatch = abbr.match(/^([\w:-]+)?(.*)?\{([^}]+)\}$/);
+        if (textMatch) {
+          const tag = textMatch[1] || 'div';
+          const modifiers = textMatch[2] || '';
+          const text = textMatch[3];
+          const base = tag + modifiers;
+          const expanded = expandSingle(base);
+          return expanded.replace(/(<[\w:-]+[^>]*>)(<\/[\w:-]+>)/, `$1${text}$2`);
+        }
+
+        const attrMatch = abbr.match(/^([\w:-]+)\[([^\]]+)\]$/);
+        if (attrMatch) {
+          const tag = attrMatch[1];
+          const attrs = attrMatch[2];
+          const selfClosing = ['input', 'img', 'br', 'hr', 'meta', 'link', 'area', 'base', 'col', 'embed', 'source', 'track', 'wbr', 'param'];
+          
+          const processedAttrs = attrs.split(/\s+/)
+            .map(attr => {
+              if (attr.includes('=')) {
+                const [key, val] = attr.split('=');
+                const cleanVal = val.replace(/['"]/g, '');
+                return `${key}="${cleanVal}"`;
+              }
+              return `${attr}=""`;
+            }).join(' ');
+          
+          if (selfClosing.includes(tag)) {
+            return `<${tag} ${processedAttrs}>`;
+          }
+          return `<${tag} ${processedAttrs}></${tag}>`;
+        }
+
+        // Class and ID: div.class#id or .class#id
+        const classIdMatch = abbr.match(/^([\w:-]+)?((?:\.[a-zA-Z0-9-_]+)+)?(#[a-zA-Z0-9-_]+)?$/);
+        if (classIdMatch && (classIdMatch[2] || classIdMatch[3])) {
+          const tag = classIdMatch[1] || 'div';
+          const classes = classIdMatch[2] ? classIdMatch[2].split('.').filter(Boolean).join(' ') : '';
+          const id = classIdMatch[3] ? classIdMatch[3].substring(1) : '';
+          
+          const attrs = [];
+          if (id) attrs.push(`id="${id}"`);
+          if (classes) attrs.push(`class="${classes}"`);
+          
+          const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+          const selfClosing = ['input', 'img', 'br', 'hr', 'meta', 'link'];
+          
+          if (selfClosing.includes(tag)) {
+            return `<${tag}${attrStr}>`;
+          }
+          return `<${tag}${attrStr}></${tag}>`;
+        }
+
+        // Self-closing tag with trailing slash
+        if (abbr.endsWith('/')) {
+          const tag = abbr.slice(0, -1);
+          return `<${tag}>`;
+        }
+
+        // Basic tag
+        if (/^[\w:-]+$/.test(abbr)) {
+          const selfClosing = ['input', 'img', 'br', 'hr', 'meta', 'link', 'area', 'base', 'col', 'embed', 'source', 'track', 'wbr', 'param'];
+          if (selfClosing.includes(abbr)) {
+            return `<${abbr}>`;
+          }
+          return `<${abbr}></${abbr}>`;
+        }
+
+        return abbr;
+      }
+
+      function expandGroups(abbr, depth = 0) {
+        // Simple group handling
+        return abbr.replace(/\(([^)]+)\)/g, (match, group) => {
+          return expandEmmet(group, depth + 1);
+        });
+      }
+
+      function expandClimbUp(abbr, depth = 0) {
+        // Basic climb-up handling
+        const parts = abbr.split('^');
+        return parts.map(p => expandEmmet(p.trim(), depth + 1)).join('\n');
+      }
+
+      // Register comprehensive completion provider
+      monaco.languages.registerCompletionItemProvider('html', {
+        triggerCharacters: ['.', '#', '>', '+', '*', '[', '{', '!', ':'],
+        provideCompletionItems: function(model, position) {
+          const textUntilPosition = model.getValueInRange({
+            startLineNumber: position.lineNumber,
+            startColumn: 1,
+            endLineNumber: position.lineNumber,
+            endColumn: position.column
+          });
+
+          const match = textUntilPosition.match(/[\w.#\-\[\]=*+>{}$:"'!:]+$/);
+          
+          if (!match) return { suggestions: [] };
+
+          const abbreviation = match[0];
+          const startColumn = position.column - abbreviation.length;
+          const suggestions = [];
+
+          Object.keys(emmetSnippets).forEach(snippet => {
+            if (snippet.startsWith(abbreviation) || abbreviation === '') {
+              try {
+                const expanded = expandEmmet(snippet);
+                suggestions.push({
+                  label: snippet,
+                  kind: monaco.languages.CompletionItemKind.Snippet,
+                  insertText: expanded,
+                  range: {
+                    startLineNumber: position.lineNumber,
+                    startColumn: startColumn,
+                    endLineNumber: position.lineNumber,
+                    endColumn: position.column
+                  },
+                  detail: 'Emmet: ' + snippet,
+                  documentation: {
+                    value: '```html\n' + expanded + '\n```'
+                  },
+                  sortText: '0' + snippet
+                });
+              } catch (e) {
+              }
+            }
+          });
+
+          if (abbreviation.length > 0) {
+            try {
+              const expanded = expandEmmet(abbreviation);
+              if (expanded !== abbreviation && !emmetSnippets[abbreviation]) {
+                suggestions.push({
+                  label: abbreviation + ' (dynamic)',
+                  kind: monaco.languages.CompletionItemKind.Snippet,
+                  insertText: expanded,
+                  range: {
+                    startLineNumber: position.lineNumber,
+                    startColumn: startColumn,
+                    endLineNumber: position.lineNumber,
+                    endColumn: position.column
+                  },
+                  detail: 'Emmet Abbreviation',
+                  documentation: {
+                    value: '```html\n' + expanded + '\n```'
+                  },
+                  sortText: '00' + abbreviation
+                });
+              }
+            } catch (e) {
+            }
+          }
+
+          return { suggestions };
+        }
+      });
+
+      editor.addCommand(monaco.KeyCode.Tab, function() {
+        const position = editor.getPosition();
+        const model = editor.getModel();
+        const lineContent = model.getLineContent(position.lineNumber);
+        const textBeforeCursor = lineContent.substring(0, position.column - 1);
+        
+        const match = textBeforeCursor.match(/[\w.#\-\[\]=*+>{}$:"'!:]+$/);
+        
+        if (match) {
+          const abbreviation = match[0];
+          const startColumn = position.column - abbreviation.length;
+          
+          try {
+            const expanded = expandEmmet(abbreviation);
+            
+            if (expanded !== abbreviation) {
+              const range = new monaco.Range(
+                position.lineNumber,
+                startColumn,
+                position.lineNumber,
+                position.column
+              );
+              
+              editor.executeEdits("emmet", [{
+                range: range,
+                text: expanded
+              }]);
+              
+              const cursorMatch = expanded.match(/(<[\w:-]+[^>]*>)(<\/[\w:-]+>)/);
+              if (cursorMatch) {
+                const offset = cursorMatch[1].length;
+                editor.setPosition({
+                  lineNumber: position.lineNumber,
+                  column: startColumn + offset
+                });
+              }
+              return;
+            }
+          } catch (e) {
+            // Fall through to default tab
+          }
+        }
+        
+        editor.trigger('keyboard', 'type', { text: '  ' });
+      });
+
+      // Auto-trigger suggestions
+      editor.onDidChangeModelContent(() => {
+        const position = editor.getPosition();
+        const model = editor.getModel();
+        const lineContent = model.getLineContent(position.lineNumber);
+        const textBeforeCursor = lineContent.substring(0, position.column - 1);
+        const lastChar = textBeforeCursor[textBeforeCursor.length - 1];
+        
+        if (['.', '#', '>', '+', '*', '[', '{', ':', '!'].includes(lastChar) || 
+            /[a-zA-Z]/.test(lastChar)) {
+          editor.trigger('emmet', 'editor.action.triggerSuggest', {});
+        }
+      });
+    });
+  </script>
+</body>
+</html>

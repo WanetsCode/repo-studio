@@ -1,0 +1,96 @@
+body, html {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Segoe UI", sans-serif;
+}
+
+
+.vscode {
+  background: #242424;
+  color: #ffffff;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.titlebar {
+  height: 30px;
+  background: #101010;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+  font-size: 13px;
+  user-select: none;
+}
+
+.workspace {
+  flex: 1;
+  display: flex;
+}
+
+.sidebar {
+  width: 250px;
+  background: #0a0a0a;
+  color: #cccccc;
+  border-right: 1px solid #333;
+  padding: 10px;
+}
+
+.explorer-title {
+  font-size: 11px;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+.file-tree {
+  list-style: none;
+  padding: 0;
+}
+
+.file-tree li {
+  padding: 3px 0;
+  cursor: pointer;
+}
+
+.file-tree li:hover {
+  background: #2a2d2e;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs {
+  height: 35px;
+  display: flex;
+  background: #252526;
+  border-bottom: 1px solid #333;
+}
+
+.tab {
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.tab.active {
+  background: #1e1e1e;
+}
+
+.editor {
+  flex: 1;
+}
+
+.statusbar {
+  height: 22px;
+  background: #007acc;
+  color: white;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+}
