@@ -39,53 +39,138 @@
 
 <script>
 const CLIENT_ID = "Ov23ligGBVeAb4o3uFLg";
-const REDIRECT_URI = "http://127.0.0.1:5500/client/auth/github.html";
+const REDIRECT_URI = "http://127.0.0.1:5500/auth/github.html";
+const WORKER_URL = "https://github-0auth-pinger.mrman6547.workers.dev/";
 
-function startLogin() {
+const statusEl = document.getElementById("status");
+const outputEl = document.getElementById("output");
+const loginBtn = document.getElementById("loginBtn");
+
+async function generateCodeVerifier() {
+    const array = new Uint8Array(64);
+    crypto.getRandomValues(array);
+    return btoa(String.fromCharCode(...array))
+        .replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+}
+
+async function sha256(str) {
+    const buf = new TextEncoder().encode(str);
+    const digest = await crypto.subtle.digest("SHA-256", buf);
+    return new Uint8Array(digest);
+}
+
+function base64url(bytes) {
+    return btoa(String.fromCharCode(...bytes))
+        .replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+}
+
+async function generateCodeChallenge(verifier) {
+    return base64url(await sha256(verifier));
+}
+
+async function startLogin() {
+    const verifier = await generateCodeVerifier();
+    const challenge = await generateCodeChallenge(verifier);
+
+    localStorage.setItem("github_pkce_verifier", verifier);
+
     const url =
         "https://github.com/login/oauth/authorize" +
-        "?response_type=code" +
-        "&client_id=" + encodeURIComponent(CLIENT_ID) +
+        "?client_id=" + CLIENT_ID +
         "&redirect_uri=" + encodeURIComponent(REDIRECT_URI) +
-        "&scope=repo%20user";
+        "&scope=repo%20user" +
+        "&response_type=code" +
+        "&code_challenge=" + challenge +
+        "&code_challenge_method=S256";
 
     window.location = url;
 }
 
-document.getElementById("loginBtn").onclick = startLogin;
+loginBtn.onclick = startLogin;
 
-// Handle callback: look for access_token in URL fragment
-(() => {
-    const hash = new URLSearchParams(location.hash.substring(1));
-    const token = hash.get("access_token");
-    if (!token) return;
 
-    // Show the token
-    document.getElementById("output").style.display = "block";
-    document.getElementById("output").textContent = "Access Token:\n" + token;
-    document.getElementById("status").textContent = "Logged in successfully.";
+function showUserCard(user) {
+    outputEl.style.display = "block";
+    outputEl.innerHTML = `
+        <div style="
+            display:flex; align-items:center; gap:15px; 
+            background:#0d1117; padding:15px;
+            border-radius:10px; text-align:left;">
+            
+            <img src="${user.avatar_url}" 
+                 style="width:64px;height:64px;border-radius:50%;"/>
 
-    fetch("https://api.github.com/user", {
-  headers: {
-    Authorization: `Bearer ${token}`,
-    Accept: "application/vnd.github+json"
-  }
-})
-.then(res => res.json())
-.then(user => {
-  console.log("User data:", user);
-  document.getElementById("status").textContent = "Hello, " + user.login + "!";
-  document.getElementById("output").style.display = "block";
-  document.getElementById("output").textContent = JSON.stringify(user, null, 2);
-})
-.catch(err => {
-  console.error("Fetch error:", err);
-  document.getElementById("status").textContent = "Failed to fetch user info.";
-});
+            <div>
+                <div style="font-size:18px;font-weight:bold;">${user.name || user.login}</div>
+                <div style="color:#aaa;">@${user.login}</div>
+                <div style="margin-top:5px;">${user.bio || ""}</div>
+            </div>
+        </div>
+    `;
+}
 
+async function loadUserFromToken(token) {
+    const res = await fetch("https://api.github.com/user", {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (!res.ok) {
+        localStorage.removeItem("github_access_token");
+        statusEl.textContent = "Session expired. Please log in.";
+        return;
+    }
+
+    const user = await res.json();
+    statusEl.textContent = "Hello, " + user.login + "!";
+    showUserCard(user);
+}
+
+(async () => {
+    const savedToken = localStorage.getItem("github_access_token");
+    if (savedToken) {
+        loadUserFromToken(savedToken);
+        return;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+    if (!code) return;
+
+    statusEl.textContent = "Exchanging code...";
+
+    const verifier = localStorage.getItem("github_pkce_verifier");
+    if (!verifier) {
+        statusEl.textContent = "Missing PKCE verifier.";
+        return;
+    }
+
+    const res = await fetch(WORKER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            code,
+            code_verifier: verifier,
+            redirect_uri: REDIRECT_URI
+        })
+    });
+
+    const data = await res.json();
+    if (!res.ok || data.error) {
+        console.error("Exchange failed:", data);
+        statusEl.textContent = "Token exchange failed.";
+        return;
+    }
+
+    const token = data.access_token;
+
+    localStorage.setItem("github_access_token", token);
+    localStorage.removeItem("github_pkce_verifier");
+
+    history.replaceState({}, document.title, REDIRECT_URI);
+
+    await loadUserFromToken(token);
 })();
-
-
 </script>
+
 </body>
 </html>
