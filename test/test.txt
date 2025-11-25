@@ -1,0 +1,8 @@
+This file has been made entirely on the first DevBuild (0.1 - L0.M2) of Repostudio.
+
+This file has been changed by version ( development 0.1 - L1.M2) of Repostudio.
+
+This file has been changed by version ( development 0.1 - L1.1.M2) of Repostudio.
+
+This file has been changed by version ( development 0.1 - L1.2.M2) of Repostudio.
+
