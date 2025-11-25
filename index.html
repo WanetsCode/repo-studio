@@ -1,553 +1,468 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Repo studio 2</title>
-  <link rel="stylesheet" href="vscode.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Repo Studio | Multi-Theme</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+
+<style>
+    /* --- THEME VARIABLES --- */
+    :root {
+        /* Default: Dark (VS Code) */
+        --bg-primary: #1e1e1e;
+        --bg-secondary: #252526;
+        --bg-activity: #333333;
+        --border: #3c3c3c;
+        --text: #cccccc;
+        --input-bg: #3e3e3e;
+        --accent: #007acc;
+        --accent-hover: #005f9e;
+        --tab-active-border: #007acc; 
+        --anim-speed: 0.3s;
+    }
+
+    /* THEME CLASSES */
+    body.theme-light {
+        --bg-primary: #ffffff;
+        --bg-secondary: #f3f3f3;
+        --bg-activity: #2c2c2c; /* Keep activity bar dark usually looks better */
+        --border: #e5e5e5;
+        --text: #333333;
+        --input-bg: #ffffff;
+        --accent: #007acc;
+        --accent-hover: #005f9e;
+        --tab-active-border: #007acc;
+    }
+
+    body.theme-original {
+        --bg-primary: #0d1117;
+        --bg-secondary: #161b22;
+        --bg-activity: #0d1117;
+        --border: #30363d;
+        --text: #c9d1d9;
+        --input-bg: #0d1117;
+        --accent: #238636;
+        --accent-hover: #2ea043;
+        --tab-active-border: #f78166;
+    }
+
+    body.theme-red {
+        --bg-primary: #220a0a;
+        --bg-secondary: #2a0f0f;
+        --bg-activity: #1a0505;
+        --border: #4a1515;
+        --text: #ffdddd;
+        --input-bg: #380c0c;
+        --accent: #bd0f0f;
+        --accent-hover: #e61b1b;
+        --tab-active-border: #ff3333;
+    }
+
+    /* --- GLOBAL STYLES --- */
+    body { 
+        margin: 0; 
+        height: 100vh; 
+        display: flex; 
+        flex-direction: column; 
+        background: var(--bg-primary); 
+        color: var(--text); 
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        font-size: 13px;
+        overflow: hidden;
+        transition: background 0.5s ease, color 0.5s ease; /* Theme Transition */
+    }
+    * { box-sizing: border-box; }
+
+    /* --- LAYOUT --- */
+    #topbar { 
+        height: 30px; 
+        background: var(--bg-secondary); 
+        display: flex; align-items: center; padding: 0 10px; 
+        border-bottom: 1px solid var(--border); gap: 15px; flex-shrink: 0;
+        transition: background var(--anim-speed);
+    }
+
+    #main { flex: 1; display: flex; overflow: hidden; }
+
+    /* --- COMPONENTS --- */
+    .btn { 
+        background: var(--input-bg); border: 1px solid var(--border); color: var(--text); 
+        padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 12px; white-space: nowrap;
+        transition: all 0.2s ease;
+    }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    .btn-primary { background: var(--accent); color: white; border: none; }
+    .btn-primary:hover { background: var(--accent-hover); }
+
+    select, input { 
+        background: var(--input-bg); color: var(--text); border: 1px solid var(--border); 
+        padding: 4px; border-radius: 3px; outline: none; font-size: 12px;
+        transition: border 0.3s;
+    }
+    select:focus, input:focus { border-color: var(--accent); }
+
+    /* --- ACTIVITY BAR --- */
+    #activity-bar {
+        width: 48px; background: var(--bg-activity); display: flex; flex-direction: column; 
+        align-items: center; flex-shrink: 0; justify-content: space-between;
+        transition: background var(--anim-speed);
+        z-index: 10;
+    }
+    .activity-icon {
+        padding: 12px 0; cursor: pointer; opacity: 0.5; width: 100%; text-align: center;
+        transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy transition */
+    }
+    .activity-icon img { width: 24px; height: 24px; filter: invert(80%); }
+    .activity-icon:hover { opacity: 1; transform: scale(1.15); }
+    .activity-icon.active { opacity: 1; border-left: 2px solid var(--text); }
+
+    /* --- SIDEBAR --- */
+    #sidebar { 
+        width: 260px; background: var(--bg-secondary); border-right: 1px solid var(--border); 
+        display: flex; flex-direction: column; flex-shrink: 0; position: relative;
+        transition: background var(--anim-speed);
+    }
+    
+    /* SIDEBAR VIEWS (ANIMATED) */
+    .sidebar-view {
+        flex: 1; display: flex; flex-direction: column;
+        animation: slideIn 0.3s ease-out;
+    }
+    .sidebar-view.hidden { display: none; }
+
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateX(-10px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    #sidebar-header { 
+        display: flex; justify-content: space-between; align-items: center; 
+        padding: 10px; font-size: 11px; font-weight: 600; text-transform: uppercase; color: #888;
+    }
+
+    /* File Items */
+    .file-item { 
+        padding: 4px 10px; cursor: pointer; white-space: nowrap; overflow: hidden; 
+        text-overflow: ellipsis; display: flex; align-items: center; font-size: 13px;
+        transition: background 0.1s;
+    }
+    .file-item:hover { background: rgba(255,255,255,0.05); }
+    .file-item.active { background: var(--accent); color: white; }
+
+    /* Theme Buttons in Sidebar */
+    .theme-btn {
+        display: flex; align-items: center; padding: 10px; margin: 5px 10px;
+        background: var(--input-bg); border: 1px solid var(--border); border-radius: 4px; cursor: pointer;
+    }
+    .theme-btn:hover { border-color: var(--accent); }
+    .color-preview { width: 15px; height: 15px; border-radius: 50%; margin-right: 10px; border:1px solid #777;}
+
+    /* --- EDITOR --- */
+    #editorPanel { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    #tabs { 
+        height: 35px; background: #2d2d2d; border-bottom: 1px solid var(--border); 
+        display: flex; overflow-x: auto; flex-shrink: 0;
+    }
+    .tab { 
+        padding: 0 10px; background: var(--bg-secondary); border-right: 1px solid var(--border);
+        cursor: pointer; display: flex; align-items: center; font-size: 13px; color: #888;
+        transition: background 0.2s;
+    }
+    .tab.active { 
+        background: var(--bg-primary); color: var(--text); 
+        box-shadow: inset 0 -2px 0 0 var(--tab-active-border);
+    }
+    
+    #monaco { width: 100%; height: 100%; }
+
+    /* --- UTILS --- */
+    #status { margin-left: auto; opacity: 0.8; font-family: monospace; }
+    #contextMenu {
+        position: absolute; display: none; background: var(--bg-secondary); 
+        border: 1px solid var(--border); padding: 5px 0; z-index: 999; 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    }
+    #contextMenu div { padding: 6px 20px; cursor: pointer; }
+    #contextMenu div:hover { background: var(--accent); color: white; }
+</style>
 </head>
-<body>
-  <div class="vscode">
-    <div class="titlebar">Repo Studio</div>
-    <div class="workspace">
-      <div class="sidebar">
-        <div class="explorer-title">EXPLORER</div>
-        <ul class="file-tree">
-          <li>index.html</li>
-          <li>style.css</li>
-          <li>script.js</li>
-        </ul>
-      </div>
-      <div class="content">
-        <div class="tabs">
-          <div class="tab active">index.html</div>
+<body class="theme-dark"> <div id="topbar">
+    <span style="color:var(--accent); font-weight: 700;">Repo Studio</span>
+    <select id="repoSelector"><option>Loading...</option></select>
+    <select id="branchSelector"><option>main</option></select>
+    <div style="width:1px; height:15px; background:var(--border)"></div>
+    <input type="text" id="commitMsg" placeholder="Commit message..." style="flex:1; max-width:200px">
+    <button id="btnCommit" class="btn btn-primary">Commit</button>
+    <div id="status">Wait...</div>
+</div>
+
+<div id="main">
+    <div id="activity-bar">
+        <div class="activity-icon-group">
+            <div class="activity-icon active" onclick="switchView('explorer', this)" title="Explorer">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAXCAYAAADgKtSgAAAA9UlEQVR4AeyUiw3CMAxEIyaBTWASYBLEJMAksAmwCfcqJU3cVMJREarUytemtu/ifFfhh89fxNcakIVcPrOVH0R/VnCXj5g+35sVv4hKxfoUho/YSV7aNShUWi4OgehLrzFQPaMYQ9SQRAi5OA5EN2q0AC6dpg6suHSb7WiZNfGtklpB9XAlMZwWhsSitQJ+J8zLVk7POwVa8RA3mRVPgSkai3h1FvNpYTFJKlYchwNsw6hTPaF7h1ieijD/acfklRPglMX7w7PXOfYAPjodrDhD4l45K/p24KZceKlq/Q+mBR8g6aqGBxQmSm+28j4yQWu+4h8AAAD//7V6s8gAAAAGSURBVAMAD5NPL81kEwIAAAAASUVORK5CYII=">
+            </div>
+            <div class="activity-icon" onclick="switchView('git', this)" title="Source Control">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAXCAYAAADgKtSgAAABPklEQVR4AdzUYTIEMRCGYZyEm3ASnAQnwUlwEpyE7zGbYjLJ1MTW/lnV33SS7n5lO5k5Ozng33HBL9Opr+h9p7iu3SVSco0z/bVWWx4TvtrpNX5RlDV2kwedxss3trFMJ6vh51km0I+M3yLzuIWJyxMo41luDS9JdmsX16l8jlomV45csvPyz37ya7jFW4/oJQKeFWStGPjfdlwkYC1ushZcQoE+TWndp1w5NmA8S2zBZwkbJvr82crbF67P+m73C/4a3I7KXW9599tB6vsCbGENLq6wJ/d7cYiKitbgDmhNhdH1a/Bu0dZAD67fGMUbD6sFd0i+L1riRXIbhsEKWvD7BByUN/UhY5+AuHGr4dpgx/w4raqo4cBeCO0gLfIpqMq2TWu4Kq1wt3nt8d2wPqwWHMQv+DcUgHpwsb31DQAA//+hcMDcAAAABklEQVQDANySRC8bs7aJAAAAAElFTkSuQmCC">
+            </div>
+            <div class="activity-icon" onclick="switchView('extensions', this)" title="Extensions">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAXCAYAAADgKtSgAAABLUlEQVR4AczUjU3DMBCG4YpJYBJgEmASxCTAJMAkwCbcg3qpYzmNnapSI3/y39178fnkq90Zv4uCX48cdOTPnwP8sVd0620Efhe4m9Bn6DG02nrhwD972m/0t6HVdgwuv6D0UJAEsVaq2D4MW3BO32HyGpJnAnyKuWb8FgPrKfbGsXxoLTjofZiUeol5NnDzct84T5p2uxbcJoC+V2kvwORTw2ebk9XGQQ1PjPwpt5OC1XDHy/wpN/l3wRl0qK/hnAVQGfQeC2UZxrS/teBSIS2pr37c3LIF936klRSp6ZwP9TXcXwOoY5Ii802q4ZsgS04tuFcvT7Dk11rnw3faq+HS4ALlXRn2ytsCyl//rxpu0QW6SEF6xZ74T2rBbfoDQXrFnt9MS/CZ0dbJHwAAAP//toRQsAAAAAZJREFUAwDIgkMvl69D9gAAAABJRU5ErkJggg==">
+            </div>
+            <div class="activity-icon" onclick="switchView('settings', this)" title="Settings & Themes">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAXCAYAAADgKtSgAAABaElEQVR4AezTYTYEMRAE4HARnAQnwUlwEpwEJ8FJqG+e3pmdyYwf+OE981KbpLq6knSyh+0Xv3/zbnG/U5bjruOE/Mr8Ltr3T7ykvwyqVQzfXWjL/PHT5SD9SXAbXAdldJ4x/j59aTMc25b5WWQM07XX1hoT/UUbP3MaPf0YyWjN3O4kQGS79pCRWLq9Rrfg18yJZc93oyzPAjO4i6cZ19bM6RzXpQFTF2dR5RFniHfhNyHE0o1ty5yJS6ukmstWgiODgMZGMtxvW+YMqN/yU6gyWZChO0i439bMmSiDkpwmtWCuFKGGRuf10E75Idgzl8DEG3bkqygL5pk2cb1SieGddG+BnrlECY7OYAqcUjCyiYrhlcklF9d9LRIXz2qX0RojcaVqkw8Pu0XnO2fsqHbviGtg4JJ5G5fO2AL4xc4FHM8fRfIaaGyCiZzSuSdz/MIcKShxC8pCC1O9MW7AvCwD+VM/f9f8AwAA//+5/c/xAAAABklEQVQDAM+qXC/xfGKJAAAAAElFTkSuQmCC">
+            </div>
         </div>
-        <div id="editor" class="editor"></div>
-      </div>
+        
+        <div class="activity-icon-group" style="padding-bottom: 10px;">
+            <div class="activity-icon" title="Account">
+                 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAXCAYAAADgKtSgAAABdklEQVR4AeTT3VXDMAyG4cIiwCTAJMAkwCTAJMAkwCZ8TxPnpImS5qZX7ZEq27Je/SS53J3wdx7wu0zwudfr2KOyZSxAnyEBx+zF/i0rvphajsEBfxL6Eb2PvvZ6E0skecyiTLIENwJQQUDvAUzlKQf0IbbsooIDqkgg/U1wE762Zr/ypyN2lqCCq+QlQQJiBhEsqY6sB0cWxqUIHWfbSQU3QzPubnT/YIKNSKVOD0A5EHMbO0gFH5yjBZDqHEkC5GHbL+pWOKAEDWT2ErR9abfCVW00qm06fSazBFvhQGb91xPMXjf9tjYVHEjb4wgjoVf9ofX0jod5kLCCfweg9Rbs9aOC49oLvzPWPer1PXgOFdzXqHrBVDUXQfqgzJ4akdF4bSXw7jtzN1c7qeA8AGAqaup8rEYDxi+Rgsb+3RLcJZcFaVUH3hYg1ba9ImYVC6ZrcH5qTA0ggdlLKLEC3Cl1C1yg9luVxiWh81XdCl+FLDlPCv8HAAD//0Ni3FoAAAAGSURBVAMAR99JL7wesPIAAAAASUVORK5CYII=">
+            </div>
+        </div>
     </div>
-    <div class="statusbar"><p>Repo Studio 1.0 | Loaded Reposistory: None/None | Commiting is disabled (<i>null</i>) | <a>Preview off</a></p></div>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
-  <script>
+    <div id="sidebar">
+        <div id="view-explorer" class="sidebar-view">
+            <div id="sidebar-header">
+                <span>Explorer</span>
+                <button class="btn" onclick="createNewFile()">+</button>
+            </div>
+            <div id="fileTree"></div>
+        </div>
+
+        <div id="view-settings" class="sidebar-view hidden">
+            <div id="sidebar-header"><span>Appearance</span></div>
+            <div style="padding: 10px;">
+                <div class="theme-btn" onclick="setTheme('dark')">
+                    <div class="color-preview" style="background:#1e1e1e"></div> Dark (Default)
+                </div>
+                <div class="theme-btn" onclick="setTheme('light')">
+                    <div class="color-preview" style="background:#ffffff"></div> White / Light
+                </div>
+                <div class="theme-btn" onclick="setTheme('original')">
+                    <div class="color-preview" style="background:#0d1117"></div> Original
+                </div>
+                <div class="theme-btn" onclick="setTheme('red')">
+                    <div class="color-preview" style="background:#220a0a"></div> Red Crimson
+                </div>
+            </div>
+        </div>
+
+        <div id="view-git" class="sidebar-view hidden">
+            <div id="sidebar-header"><span>Source Control</span></div>
+            <div style="padding:20px; text-align:center; opacity:0.6">No changes detected</div>
+        </div>
+        <div id="view-extensions" class="sidebar-view hidden">
+            <div id="sidebar-header"><span>Extensions</span></div>
+            <div style="padding:20px; text-align:center; opacity:0.6">Marketplace offline</div>
+        </div>
+    </div>
+
+    <div id="editorPanel">
+        <div id="tabs"></div>
+        <div id="editorContainer">
+            <div id="monaco"></div>
+        </div>
+    </div>
+</div>
+
+<div id="contextMenu">
+    <div id="ctxRename">Rename...</div>
+    <div id="ctxDelete" style="color: #da3633;">Delete</div>
+</div>
+
+<script>
+// --- APP LOGIC ---
+const TOKEN = localStorage.getItem("github_access_token");
+// if (!TOKEN) location.href = "/auth/github";
+
+const headers = { Authorization: `Bearer ${TOKEN}`, Accept: "application/vnd.github+json" };
+
+// Elements
+const els = {
+    repo: document.getElementById("repoSelector"),
+    branch: document.getElementById("branchSelector"),
+    tree: document.getElementById("fileTree"),
+    status: document.getElementById("status"),
+    tabs: document.getElementById("tabs"),
+    ctx: document.getElementById("contextMenu")
+};
+
+let state = { repo: null, branch: "main", user: null, editor: null, activePath: null, openFiles: new Map() };
+
+// --- THEME & VIEW LOGIC ---
+function switchView(viewName, iconElement) {
+    // Update Icons
+    document.querySelectorAll('.activity-icon').forEach(i => i.classList.remove('active'));
+    iconElement.classList.add('active');
+
+    // Update Sidebar
+    document.querySelectorAll('.sidebar-view').forEach(v => v.classList.add('hidden'));
+    document.getElementById(`view-${viewName}`).classList.remove('hidden');
+}
+
+function setTheme(theme) {
+    document.body.className = `theme-${theme}`;
     
-    require.config({ 
-      paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs" }
+    // Switch Monaco Theme
+    const monacoTheme = theme === 'light' ? 'vs' : 'vs-dark';
+    if(monaco) monaco.editor.setTheme(monacoTheme);
+}
+
+// --- MONACO INIT ---
+require.config({ paths: { vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs" }});
+require(["vs/editor/editor.main"], () => {
+    state.editor = monaco.editor.create(document.getElementById("monaco"), {
+        value: "// Repo Studio Ready", language: "javascript", theme: "vs-dark", automaticLayout: true
     });
-    
-    require(["vs/editor/editor.main"], function () {
-      const emmetSnippets = {
-        "a": "a[href]",
-        "a:blank": "a[href='http://' target='_blank' rel='noopener noreferrer']",
-        "a:link": "a[href='http://']",
-        "a:mail": "a[href='mailto:']",
-        "a:tel": "a[href='tel:+']",
-        
-        "abbr": "abbr[title]",
-        "acronym": "acronym[title]",
-        "bdo": "bdo[dir]",
-        "bdo:r": "bdo[dir=rtl]",
-        "bdo:l": "bdo[dir=ltr]",
-        
-        "base": "base[href]/",
-        "br": "br/",
-        "hr": "hr/",
-        "col": "col/",
-        
-        "link": "link[rel=stylesheet href]/",
-        "link:css": "link[href='style.css']",
-        "link:print": "link[href='print.css' media=print]",
-        "link:favicon": "link[rel='icon' type=image/x-icon href='favicon.ico']",
-        "link:mf": "link[rel='manifest' href='manifest.json']",
-        "link:touch": "link[rel=apple-touch-icon href='favicon.png']",
-        "link:rss": "link[rel=alternate type=application/rss+xml title=RSS href='rss.xml']",
-        "link:atom": "link[rel=alternate type=application/atom+xml title=Atom href='atom.xml']",
-        "link:im": "link[rel=import href='component.html']",
-        
-        "meta": "meta/",
-        "meta:utf": "meta[http-equiv=Content-Type content='text/html;charset=UTF-8']",
-        "meta:vp": "meta[name=viewport content='width=device-width, initial-scale=1.0']",
-        "meta:compat": "meta[http-equiv=X-UA-Compatible content='IE=edge']",
-        "meta:edge": "meta[http-equiv=X-UA-Compatible content='IE=edge']",
-        "meta:redirect": "meta[http-equiv=refresh content='0; url=http://']",
-        "meta:kw": "meta[name=keywords content]",
-        "meta:desc": "meta[name=description content]",
-        
-        "style": "style",
-        "script": "script",
-        "script:src": "script[src]",
-        "script:module": "script[type=module src]",
-        
-        "img": "img[src alt]/",
-        "img:s": "img[src alt srcset]/",
-        "img:z": "img[src alt sizes srcset]/",
-        "picture": "picture",
-        "src": "source/",
-        "src:sc": "source[src type]/",
-        "src:s": "source[srcset]/",
-        "src:t": "source[srcset type]/",
-        "src:z": "source[sizes srcset]/",
-        "src:m": "source[media srcset]/",
-        "src:mt": "source[media srcset type]/",
-        "src:mz": "source[media sizes srcset]/",
-        "src:zt": "source[sizes srcset type]/",
-        
-        "iframe": "iframe[src]",
-        "embed": "embed[src type]/",
-        "object": "object[data type]",
-        "param": "param[name value]/",
-        "map": "map[name]",
-        "area": "area[shape coords href alt]/",
-        "area:d": "area[shape=default href alt]/",
-        "area:c": "area[shape=circle coords href alt]/",
-        "area:r": "area[shape=rect coords href alt]/",
-        "area:p": "area[shape=poly coords href alt]/",
-        
-        "form": "form[action]",
-        "form:get": "form[method=get]",
-        "form:post": "form[method=post]",
-        "label": "label[for]",
-        "input": "input[type=${1:text}]/",
-        "inp": "input[name type]/",
-        "input:h": "input[type=hidden name]/",
-        "input:hidden": "input[type=hidden name]/",
-        "input:t": "input[type=text name]/",
-        "input:text": "input[type=text name]/",
-        "input:search": "input[type=search name]/",
-        "input:email": "input[type=email name]/",
-        "input:url": "input[type=url name]/",
-        "input:p": "input[type=password name]/",
-        "input:password": "input[type=password name]/",
-        "input:datetime": "input[type=datetime name]/",
-        "input:date": "input[type=date name]/",
-        "input:datetime-local": "input[type=datetime-local name]/",
-        "input:month": "input[type=month name]/",
-        "input:week": "input[type=week name]/",
-        "input:time": "input[type=time name]/",
-        "input:tel": "input[type=tel name]/",
-        "input:number": "input[type=number name]/",
-        "input:color": "input[type=color name]/",
-        "input:c": "input[type=checkbox name]/",
-        "input:checkbox": "input[type=checkbox name]/",
-        "input:r": "input[type=radio name]/",
-        "input:radio": "input[type=radio name]/",
-        "input:range": "input[type=range name]/",
-        "input:f": "input[type=file name]/",
-        "input:file": "input[type=file name]/",
-        "input:s": "input[type=submit value]/",
-        "input:submit": "input[type=submit value]/",
-        "input:i": "input[type=image src alt]/",
-        "input:image": "input[type=image src alt]/",
-        "input:b": "input[type=button value]/",
-        "input:button": "input[type=button value]/",
-        "input:reset": "input[type=reset value]/",
-        "isindex": "isindex/",
-        "select": "select[name]",
-        "select:d": "select[name disabled]",
-        "opt": "option[value]",
-        "option": "option[value]",
-        "textarea": "textarea[name]",
-        "marquee": "marquee[behavior direction]",
-        "menu:c": "menu[type=context]",
-        "menu:t": "menu[type=toolbar]",
-        "video": "video[src]",
-        "audio": "audio[src]",
-        "html:xml": "html[xmlns=http://www.w3.org/1999/xhtml]",
-        
-        "btn": "button",
-        "btn:b": "button[type=button]",
-        "btn:r": "button[type=reset]",
-        "btn:s": "button[type=submit]",
-        "button": "button",
-        "button:button": "button[type=button]",
-        "button:reset": "button[type=reset]",
-        "button:submit": "button[type=submit]",
-        
-        "ol+": "ol>li",
-        "ul+": "ul>li",
-        "dl+": "dl>dt+dd",
-        "map+": "map>area",
-        "table+": "table>tr>td",
-        "colgroup+": "colgroup>col",
-        "colg+": "colgroup>col",
-        "tr+": "tr>td",
-        "select+": "select>option",
-        "optgroup+": "optgroup>option",
-        "optg+": "optgroup>option",
-        "pic+": "picture>source+img",
-        
-        "fst": "fieldset",
-        "fset": "fieldset",
-        "fieldset": "fieldset",
-        "leg": "legend",
-        "legend": "legend",
-        
-        "!": "!!!+html[lang=en]>head+body",
-        "!!!": "<!DOCTYPE html>",
-        "doc": "html[lang=en]>head+body",
-        "html:5": "!!!+html[lang=en]>head+body",
-        
-        "c": "<!--  -->",
-        "cc:ie": "<!--[if IE]><!<![endif]-->",
-        "cc:noie": "<!--[if !IE]><!--><!--<![endif]-->",
-        
-        "tbl": "table",
-        "cap": "caption",
-        "colg": "colgroup",
-        "thead": "thead",
-        "tbody": "tbody",
-        "tfoot": "tfoot",
-        "th": "th",
-        "td": "td",
-        
-        "adr": "address",
-        "art": "article",
-        "sect": "section",
-        "hdr": "header",
-        "ftr": "footer",
-        "bq": "blockquote",
-        "fig": "figure",
-        "figc": "figcaption",
-        "ifr": "iframe",
-        "emb": "embed",
-        "obj": "object",
-        "vid": "video",
-        "aud": "audio",
-        "cvs": "canvas",
-        "det": "details",
-        "sum": "summary",
-        "prog": "progress",
-        "datal": "datalist",
-        "kg": "keygen",
-        "out": "output",
-        "dia": "dialog",
-        "str": "strong",
-        "samp": "samp"
-      };
+    initApp();
+});
 
-      const editor = monaco.editor.create(document.getElementById("editor"), {
-        value: `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Document</title>
-</head>
-<body>
-  <!-- Try ANY Emmet abbreviation - type to see suggestions! -->
-  <!-- Start typing: a, link, input, meta, img, etc. -->
-  <!-- Complex: ul>li*5, nav>ul>li*3>a, table>tr*3>td*4 -->
-  <!-- Special: !, link:css, input:email, meta:vp -->
-  
-</body>
-</html>`,
-        language: "html",
-        theme: "vs-dark",
-        automaticLayout: true,
-        fontSize: 14,
-        minimap: { enabled: false },
-        tabSize: 2,
-        quickSuggestions: {
-          other: true,
-          comments: false,
-          strings: false
-        },
-        suggestOnTriggerCharacters: true
-      });
+// --- CORE FUNCTIONS (Condensed for brevity) ---
+async function initApp() {
+    await loadUser();
+    await loadRepos();
+}
 
-      function expandEmmet(abbreviation, depth = 0) {
-        if (depth > 10) return abbreviation;
-        
-        if (emmetSnippets[abbreviation]) {
-          const snippet = emmetSnippets[abbreviation];
-          return expandEmmet(snippet, depth + 1);
-        }
+async function loadUser() {
+    try {
+        const res = await fetch("https://api.github.com/user", { headers });
+        state.user = await res.json();
+        els.status.textContent = `User: ${state.user.login}`;
+    } catch(e) { console.log("Auth needed"); }
+}
 
-        if (abbreviation.includes('+') && !abbreviation.includes('*')) {
-          if (abbreviation.startsWith('!!!+')) {
-            const parts = abbreviation.substring(4);
-            const doctype = '<!DOCTYPE html>';
-            const rest = expandEmmet(parts, depth + 1);
-            return doctype + '\n' + rest;
-          }
-          
-          const parts = abbreviation.split('+');
-          return parts.map(p => expandEmmet(p.trim(), depth + 1)).join('\n');
-        }
-
-        if (abbreviation.includes('*')) {
-          const parts = abbreviation.split('*');
-          const base = parts[0];
-          const count = parseInt(parts[1]);
-          
-          if (isNaN(count)) return abbreviation;
-          
-          let result = '';
-          for (let i = 1; i <= count; i++) {
-            const expanded = expandEmmet(base.replace(/\$/g, i), depth + 1);
-            result += expanded + '\n';
-          }
-          return result.trim();
-        }
-
-        if (abbreviation.includes('>')) {
-          const parts = abbreviation.split('>');
-          return buildNested(parts, 0, '', depth);
-        }
-
-        if (abbreviation.includes('(')) {
-          return expandGroups(abbreviation, depth);
-        }
-
-        if (abbreviation.includes('^')) {
-          return expandClimbUp(abbreviation, depth);
-        }
-
-        return expandSingle(abbreviation);
-      }
-
-      function buildNested(parts, index, indent, depth = 0) {
-        if (index >= parts.length) return '';
-        
-        const current = expandSingle(parts[index].trim());
-        
-        if (index === parts.length - 1) {
-          return indent + current;
-        }
-        
-        const match = current.match(/^(<[^>]+>)(.*)(<\/[^>]+>)$/);
-        if (match) {
-          const [, opening, content, closing] = match;
-          const nested = buildNested(parts, index + 1, indent + '  ', depth);
-          return indent + opening + '\n' + nested + '\n' + indent + closing;
-        }
-        
-        return indent + current;
-      }
-
-      function expandSingle(abbr) {
-        abbr = abbr.trim();
-
-        if (abbr === '!!!') {
-          return '<!DOCTYPE html>';
-        }
-
-
-        const textMatch = abbr.match(/^([\w:-]+)?(.*)?\{([^}]+)\}$/);
-        if (textMatch) {
-          const tag = textMatch[1] || 'div';
-          const modifiers = textMatch[2] || '';
-          const text = textMatch[3];
-          const base = tag + modifiers;
-          const expanded = expandSingle(base);
-          return expanded.replace(/(<[\w:-]+[^>]*>)(<\/[\w:-]+>)/, `$1${text}$2`);
-        }
-
-        const attrMatch = abbr.match(/^([\w:-]+)\[([^\]]+)\]$/);
-        if (attrMatch) {
-          const tag = attrMatch[1];
-          const attrs = attrMatch[2];
-          const selfClosing = ['input', 'img', 'br', 'hr', 'meta', 'link', 'area', 'base', 'col', 'embed', 'source', 'track', 'wbr', 'param'];
-          
-          const processedAttrs = attrs.split(/\s+/)
-            .map(attr => {
-              if (attr.includes('=')) {
-                const [key, val] = attr.split('=');
-                const cleanVal = val.replace(/['"]/g, '');
-                return `${key}="${cleanVal}"`;
-              }
-              return `${attr}=""`;
-            }).join(' ');
-          
-          if (selfClosing.includes(tag)) {
-            return `<${tag} ${processedAttrs}>`;
-          }
-          return `<${tag} ${processedAttrs}></${tag}>`;
-        }
-
-        // Class and ID: div.class#id or .class#id
-        const classIdMatch = abbr.match(/^([\w:-]+)?((?:\.[a-zA-Z0-9-_]+)+)?(#[a-zA-Z0-9-_]+)?$/);
-        if (classIdMatch && (classIdMatch[2] || classIdMatch[3])) {
-          const tag = classIdMatch[1] || 'div';
-          const classes = classIdMatch[2] ? classIdMatch[2].split('.').filter(Boolean).join(' ') : '';
-          const id = classIdMatch[3] ? classIdMatch[3].substring(1) : '';
-          
-          const attrs = [];
-          if (id) attrs.push(`id="${id}"`);
-          if (classes) attrs.push(`class="${classes}"`);
-          
-          const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
-          const selfClosing = ['input', 'img', 'br', 'hr', 'meta', 'link'];
-          
-          if (selfClosing.includes(tag)) {
-            return `<${tag}${attrStr}>`;
-          }
-          return `<${tag}${attrStr}></${tag}>`;
-        }
-
-        // Self-closing tag with trailing slash
-        if (abbr.endsWith('/')) {
-          const tag = abbr.slice(0, -1);
-          return `<${tag}>`;
-        }
-
-        // Basic tag
-        if (/^[\w:-]+$/.test(abbr)) {
-          const selfClosing = ['input', 'img', 'br', 'hr', 'meta', 'link', 'area', 'base', 'col', 'embed', 'source', 'track', 'wbr', 'param'];
-          if (selfClosing.includes(abbr)) {
-            return `<${abbr}>`;
-          }
-          return `<${abbr}></${abbr}>`;
-        }
-
-        return abbr;
-      }
-
-      function expandGroups(abbr, depth = 0) {
-        // Simple group handling
-        return abbr.replace(/\(([^)]+)\)/g, (match, group) => {
-          return expandEmmet(group, depth + 1);
+async function loadRepos() {
+    try {
+        const res = await fetch("https://api.github.com/user/repos?sort=updated&per_page=100", { headers });
+        const repos = await res.json();
+        els.repo.innerHTML = "";
+        repos.forEach(r => {
+            const opt = document.createElement("option");
+            opt.value = r.full_name;
+            opt.textContent = r.full_name;
+            els.repo.appendChild(opt);
         });
-      }
+        els.repo.onchange = () => { state.repo = els.repo.value; loadBranches(); };
+        if(repos.length) { state.repo = repos[0].full_name; loadBranches(); }
+    } catch(e) {}
+}
 
-      function expandClimbUp(abbr, depth = 0) {
-        // Basic climb-up handling
-        const parts = abbr.split('^');
-        return parts.map(p => expandEmmet(p.trim(), depth + 1)).join('\n');
-      }
+async function loadBranches() {
+    try {
+        const res = await fetch(`https://api.github.com/repos/${state.repo}/branches`, { headers });
+        const data = await res.json();
+        els.branch.innerHTML = "";
+        data.forEach(b => {
+            const opt = document.createElement("option"); opt.value = b.name; opt.textContent = b.name;
+            els.branch.appendChild(opt);
+        });
+        els.branch.value = "main";
+        els.branch.onchange = () => { state.branch = els.branch.value; loadTree(); };
+        loadTree();
+    } catch(e) {}
+}
 
-      // Register comprehensive completion provider
-      monaco.languages.registerCompletionItemProvider('html', {
-        triggerCharacters: ['.', '#', '>', '+', '*', '[', '{', '!', ':'],
-        provideCompletionItems: function(model, position) {
-          const textUntilPosition = model.getValueInRange({
-            startLineNumber: position.lineNumber,
-            startColumn: 1,
-            endLineNumber: position.lineNumber,
-            endColumn: position.column
-          });
-
-          const match = textUntilPosition.match(/[\w.#\-\[\]=*+>{}$:"'!:]+$/);
-          
-          if (!match) return { suggestions: [] };
-
-          const abbreviation = match[0];
-          const startColumn = position.column - abbreviation.length;
-          const suggestions = [];
-
-          Object.keys(emmetSnippets).forEach(snippet => {
-            if (snippet.startsWith(abbreviation) || abbreviation === '') {
-              try {
-                const expanded = expandEmmet(snippet);
-                suggestions.push({
-                  label: snippet,
-                  kind: monaco.languages.CompletionItemKind.Snippet,
-                  insertText: expanded,
-                  range: {
-                    startLineNumber: position.lineNumber,
-                    startColumn: startColumn,
-                    endLineNumber: position.lineNumber,
-                    endColumn: position.column
-                  },
-                  detail: 'Emmet: ' + snippet,
-                  documentation: {
-                    value: '```html\n' + expanded + '\n```'
-                  },
-                  sortText: '0' + snippet
-                });
-              } catch (e) {
-              }
+async function loadTree() {
+    els.status.textContent = "Fetching...";
+    els.tree.innerHTML = "";
+    try {
+        const res = await fetch(`https://api.github.com/repos/${state.repo}/git/trees/${state.branch}?recursive=1`, { headers });
+        const data = await res.json();
+        
+        data.tree.sort((a,b) => (a.type===b.type ? a.path.localeCompare(b.path) : a.type==='tree'?-1:1))
+        .forEach(item => {
+            if(item.type === "blob") {
+                const d = document.createElement("div");
+                d.className = "file-item";
+                d.textContent = item.path;
+                d.onclick = () => openFile(item.path, item.sha);
+                d.oncontextmenu = (e) => { e.preventDefault(); showCtx(e, item.path, item.sha); };
+                els.tree.appendChild(d);
             }
-          });
+        });
+        els.status.textContent = "Ready";
+    } catch(e) {}
+}
 
-          if (abbreviation.length > 0) {
-            try {
-              const expanded = expandEmmet(abbreviation);
-              if (expanded !== abbreviation && !emmetSnippets[abbreviation]) {
-                suggestions.push({
-                  label: abbreviation + ' (dynamic)',
-                  kind: monaco.languages.CompletionItemKind.Snippet,
-                  insertText: expanded,
-                  range: {
-                    startLineNumber: position.lineNumber,
-                    startColumn: startColumn,
-                    endLineNumber: position.lineNumber,
-                    endColumn: position.column
-                  },
-                  detail: 'Emmet Abbreviation',
-                  documentation: {
-                    value: '```html\n' + expanded + '\n```'
-                  },
-                  sortText: '00' + abbreviation
-                });
-              }
-            } catch (e) {
-            }
-          }
+async function openFile(path, sha) {
+    if(state.openFiles.has(path)) return setActiveTab(path);
+    els.status.textContent = "Loading...";
+    try {
+        const res = await fetch(`https://api.github.com/repos/${state.repo}/contents/${path}?ref=${state.branch}`, { headers });
+        const json = await res.json();
+        const content = atob(json.content.replace(/\n/g, ''));
+        
+        const model = monaco.editor.createModel(content, getLang(path), monaco.Uri.parse(path));
+        
+        const tab = document.createElement("div");
+        tab.className = "tab";
+        tab.innerHTML = `<span>${path.split('/').pop()}</span> <span style="margin-left:5px" onclick="closeTab('${path}', event)">&times;</span>`;
+        tab.onclick = () => setActiveTab(path);
+        els.tabs.appendChild(tab);
 
-          return { suggestions };
-        }
-      });
+        state.openFiles.set(path, { model, sha: json.sha, tab });
+        setActiveTab(path);
+        els.status.textContent = "Ready";
+    } catch(e) { console.error(e); }
+}
 
-      editor.addCommand(monaco.KeyCode.Tab, function() {
-        const position = editor.getPosition();
-        const model = editor.getModel();
-        const lineContent = model.getLineContent(position.lineNumber);
-        const textBeforeCursor = lineContent.substring(0, position.column - 1);
-        
-        const match = textBeforeCursor.match(/[\w.#\-\[\]=*+>{}$:"'!:]+$/);
-        
-        if (match) {
-          const abbreviation = match[0];
-          const startColumn = position.column - abbreviation.length;
-          
-          try {
-            const expanded = expandEmmet(abbreviation);
-            
-            if (expanded !== abbreviation) {
-              const range = new monaco.Range(
-                position.lineNumber,
-                startColumn,
-                position.lineNumber,
-                position.column
-              );
-              
-              editor.executeEdits("emmet", [{
-                range: range,
-                text: expanded
-              }]);
-              
-              const cursorMatch = expanded.match(/(<[\w:-]+[^>]*>)(<\/[\w:-]+>)/);
-              if (cursorMatch) {
-                const offset = cursorMatch[1].length;
-                editor.setPosition({
-                  lineNumber: position.lineNumber,
-                  column: startColumn + offset
-                });
-              }
-              return;
-            }
-          } catch (e) {
-            // Fall through to default tab
-          }
-        }
-        
-        editor.trigger('keyboard', 'type', { text: '  ' });
-      });
-
-      // Auto-trigger suggestions
-      editor.onDidChangeModelContent(() => {
-        const position = editor.getPosition();
-        const model = editor.getModel();
-        const lineContent = model.getLineContent(position.lineNumber);
-        const textBeforeCursor = lineContent.substring(0, position.column - 1);
-        const lastChar = textBeforeCursor[textBeforeCursor.length - 1];
-        
-        if (['.', '#', '>', '+', '*', '[', '{', ':', '!'].includes(lastChar) || 
-            /[a-zA-Z]/.test(lastChar)) {
-          editor.trigger('emmet', 'editor.action.triggerSuggest', {});
-        }
-      });
+function setActiveTab(path) {
+    state.activePath = path;
+    state.openFiles.forEach((v, k) => {
+        v.tab.classList.toggle("active", k === path);
+        if(k === path) state.editor.setModel(v.model);
     });
-  </script>
+}
+
+window.closeTab = (path, e) => {
+    e.stopPropagation();
+    const f = state.openFiles.get(path);
+    f.tab.remove();
+    f.model.dispose();
+    state.openFiles.delete(path);
+    if(state.activePath === path) state.editor.setModel(null);
+};
+
+function getLang(f) { 
+    const ext = f.split('.').pop();
+    return ({js:'javascript',html:'html',css:'css',py:'python',json:'json',md:'markdown'})[ext] || 'plaintext';
+}
+
+// --- COMMIT & CONTEXT MENU ---
+document.getElementById("btnCommit").onclick = async () => {
+    if(!state.activePath) return alert("Open a file first");
+    const msg = document.getElementById("commitMsg").value;
+    if(!msg) return alert("Msg required");
+    
+    els.status.textContent = "Saving...";
+    const file = state.openFiles.get(state.activePath);
+    const content = btoa(unescape(encodeURIComponent(state.editor.getValue())));
+    
+    try {
+        const res = await fetch(`https://api.github.com/repos/${state.repo}/contents/${state.activePath}`, {
+            method: "PUT", headers,
+            body: JSON.stringify({
+                message: msg, content, sha: file.sha, branch: state.branch,
+                committer: { name: "RepoStudio", email: "bot@repostudio.dev" }
+            })
+        });
+        const json = await res.json();
+        file.sha = json.content.sha;
+        els.status.textContent = "Saved!";
+        setTimeout(() => els.status.textContent = "Ready", 2000);
+    } catch(e) { alert("Error saving"); }
+};
+
+let ctxFile = null;
+function showCtx(e, path, sha) {
+    ctxFile = { path, sha };
+    els.ctx.style.display = "block";
+    els.ctx.style.left = e.pageX + "px";
+    els.ctx.style.top = e.pageY + "px";
+}
+document.onclick = () => els.ctx.style.display = "none";
+</script>
 </body>
 </html>
