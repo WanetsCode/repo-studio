@@ -1,0 +1,14 @@
+{
+  "name": "node-starter",
+  "version": "0.0.0",
+  "scripts": {
+    "start": "node ./http.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "vscode-web": "^1.80.0"
+  },
+  "stackblitz": {
+    "startCommand": "npm start"
+  }
+}

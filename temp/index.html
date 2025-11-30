@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Home</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .gjs-plg-flex-column {
+      flex-grow: 1;
+    }
+
+    #ilwq {
+      flex-basis: 50%;
+      padding-top: 35px;
+      padding-right: 35px;
+      padding-bottom: 35px;
+      padding-left: 35px;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      justify-content: space-around;
+      border-right-color: rgba(124, 124, 124, 1);
+      border-right-width: 19px;
+    }
+
+    #isq4 {
+      flex-basis: 50%;
+      padding-top: 30px;
+      padding-right: 30px;
+      padding-bottom: 30px;
+      padding-left: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 29px;
+      max-height: 100vh;
+      overflow: hidden;
+    }
+
+    .gjs-plg-flex-row {
+      display: flex;
+      align-items: stretch;
+      flex-wrap: nowrap;
+    }
+
+    #i9pu {
+      width: 100%;
+    }
+
+    #imvu {
+      background-color: rgba(13, 13, 13, 1);
+    }
+
+    #iquw {
+      padding: 10px;
+      color: rgba(206, 0, 255, 1);
+      font-family: Verdana, Geneva, sans-serif;
+      text-align: center;
+      background-color: rgba(31, 31, 31, 1);
+      border-top-left-radius: 64px;
+      border-top-right-radius: 64px;
+      border-bottom-left-radius: 64px;
+      border-bottom-right-radius: 64px;
+      border-top-style: solid;
+      border-right-style: solid;
+      border-bottom-style: solid;
+      border-left-style: solid;
+    }
+
+    #ijg2i {
+      color: rgba(228, 228, 228, 1);
+    }
+
+    #in3d7 {
+      color: rgba(228, 228, 228, 1);
+    }
+
+    #ig8tl {
+      padding: 10px;
+      color: rgba(206, 0, 255, 1);
+      font-family: Verdana, Geneva, sans-serif;
+      text-align: center;
+      background-color: rgba(31, 31, 31, 1);
+      border-top-left-radius: 64px;
+      border-top-right-radius: 64px;
+      border-bottom-left-radius: 64px;
+      border-bottom-right-radius: 64px;
+      border-top-style: solid;
+      border-right-style: solid;
+      border-bottom-style: solid;
+      border-left-style: solid;
+    }
+
+    #inu0a {
+      color: rgba(228, 228, 228, 1);
+    }
+
+    #ik7i5 {
+      padding: 10px;
+      color: rgba(206, 0, 255, 1);
+      font-family: Verdana, Geneva, sans-serif;
+      text-align: center;
+      background-color: rgba(31, 31, 31, 1);
+      border-top-left-radius: 64px;
+      border-top-right-radius: 64px;
+      border-bottom-left-radius: 64px;
+      border-bottom-right-radius: 64px;
+      border-top-style: solid;
+      border-right-style: solid;
+      border-bottom-style: solid;
+      border-left-style: solid;
+    }
+
+    #iydas {
+      color: rgba(228, 228, 228, 1);
+    }
+
+    #ip338 {
+      padding: 10px;
+      color: rgba(206, 0, 255, 1);
+      font-family: Verdana, Geneva, sans-serif;
+      text-align: center;
+      background-color: rgba(31, 31, 31, 1);
+      border-top-left-radius: 64px;
+      border-top-right-radius: 64px;
+      border-bottom-left-radius: 64px;
+      border-bottom-right-radius: 64px;
+      border-top-style: solid;
+      border-right-style: solid;
+      border-bottom-style: solid;
+      border-left-style: solid;
+    }
+
+    #i29os {
+      color: rgba(228, 228, 228, 1);
+    }
+
+    #idmi5 {
+      padding: 10px;
+      color: rgba(206, 0, 255, 1);
+      font-family: Verdana, Geneva, sans-serif;
+      text-align: center;
+      background-color: rgba(31, 31, 31, 1);
+      border-top-left-radius: 64px;
+      border-top-right-radius: 64px;
+      border-bottom-left-radius: 64px;
+      border-bottom-right-radius: 64px;
+      border-top-style: solid;
+      border-right-style: solid;
+      border-bottom-style: solid;
+      border-left-style: solid;
+    }
+
+    #i71zj {
+      color: rgba(228, 228, 228, 1);
+    }
+
+    #i9jsi {
+      padding: 10px;
+      color: rgba(206, 0, 255, 1);
+      font-family: Verdana, Geneva, sans-serif;
+      text-align: center;
+      background-color: rgba(31, 31, 31, 1);
+      border-top-left-radius: 64px;
+      border-top-right-radius: 64px;
+      border-bottom-left-radius: 64px;
+      border-bottom-right-radius: 64px;
+      border-top-style: solid;
+      border-right-style: solid;
+      border-bottom-style: solid;
+      border-left-style: solid;
+    }
+
+    #ipy6b {
+      color: rgba(228, 228, 228, 1);
+    }
+
+    #io1vl {
+      padding: 10px;
+      color: rgba(206, 0, 255, 1);
+      font-family: Verdana, Geneva, sans-serif;
+      text-align: center;
+      background-color: rgba(31, 31, 31, 1);
+      border-top-left-radius: 64px;
+      border-top-right-radius: 64px;
+      border-bottom-left-radius: 64px;
+      border-bottom-right-radius: 64px;
+      border-top-style: solid;
+      border-right-style: solid;
+      border-bottom-style: solid;
+      border-left-style: solid;
+    }
+
+    #ipj1u {
+      color: rgba(228, 228, 228, 1);
+    }
+
+    #itfwk {
+      padding: 10px;
+      color: rgba(206, 0, 255, 1);
+      font-family: Verdana, Geneva, sans-serif;
+      text-align: center;
+      background-color: rgba(31, 31, 31, 1);
+      border-top-left-radius: 64px;
+      border-top-right-radius: 64px;
+      border-bottom-left-radius: 64px;
+      border-bottom-right-radius: 64px;
+      border-top-style: solid;
+      border-right-style: solid;
+      border-bottom-style: solid;
+      border-left-style: solid;
+    }
+
+    #i9fgj {
+      color: rgba(228, 228, 228, 1);
+    }
+
+    #igguh {
+      padding: 10px;
+      color: rgba(206, 0, 255, 1);
+      font-family: Verdana, Geneva, sans-serif;
+      text-align: center;
+      background-color: rgba(31, 31, 31, 1);
+      border-top-left-radius: 64px;
+      border-top-right-radius: 64px;
+      border-bottom-left-radius: 64px;
+      border-bottom-right-radius: 64px;
+      border-top-style: solid;
+      border-right-style: solid;
+      border-bottom-style: solid;
+      border-left-style: solid;
+    }
+
+    #i3m8g {
+      padding: 10px;
+      color: rgba(113, 113, 113, 1);
+      font-size: 25px;
+      font-family: Arial Black, Gadget, sans-serif;
+    }
+
+    #iuck3 {
+      text-align: center;
+    }
+
+    #i7rfu {
+      font-size: 60px;
+    }
+
+    #int74 {
+      color: rgba(228, 228, 228, 1);
+    }
+
+    #itfji {
+      font-size: 60px;
+      color: rgba(145, 145, 145, 1);
+    }
+
+    #ipb6e {
+      padding: 10px;
+      color: rgba(206, 0, 255, 1);
+      font-family: Verdana, Geneva, sans-serif;
+      text-align: center;
+      background-color: rgba(31, 31, 31, 1);
+      border-top-left-radius: 64px;
+      border-top-right-radius: 64px;
+      border-bottom-left-radius: 64px;
+      border-bottom-right-radius: 64px;
+      border-top-style: solid;
+      border-right-style: solid;
+      border-bottom-style: solid;
+      border-left-style: solid;
+    }
+
+    #ieozg {
+      flex-basis: 50%;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    #i4q6h {
+      width: 100%;
+      gap: 0%;
+      overflow-y: auto;
+      max-height: calc(100vh - 150px);
+    }
+
+    #igseh {
+      padding: 10px;
+      color: rgba(206, 0, 255, 1);
+      font-family: Verdana, Geneva, sans-serif;
+      text-align: center;
+      background-color: rgba(31, 31, 31, 1);
+      border-top-left-radius: 64px;
+      border-top-right-radius: 64px;
+      border-bottom-left-radius: 64px;
+      border-bottom-right-radius: 64px;
+      border-top-style: solid;
+      border-right-style: solid;
+      border-bottom-style: solid;
+      border-left-style: solid;
+    }
+
+    #ipmjj {
+      padding: 10px;
+      color: rgba(206, 0, 255, 1);
+      font-family: Verdana, Geneva, sans-serif;
+      text-align: center;
+      background-color: rgba(31, 31, 31, 1);
+      border-top-left-radius: 64px;
+      border-top-right-radius: 64px;
+      border-bottom-left-radius: 64px;
+      border-bottom-right-radius: 64px;
+      border-top-style: solid;
+      border-right-style: solid;
+      border-bottom-style: solid;
+      border-left-style: solid;
+    }
+
+    #i5t8j {
+      padding: 10px;
+      color: rgba(206, 0, 255, 1);
+      font-family: Verdana, Geneva, sans-serif;
+      text-align: center;
+      background-color: rgba(31, 31, 31, 1);
+      border-top-left-radius: 64px;
+      border-top-right-radius: 64px;
+      border-bottom-left-radius: 64px;
+      border-bottom-right-radius: 64px;
+      border-top-style: solid;
+      border-right-style: solid;
+      border-bottom-style: solid;
+      border-left-style: solid;
+    }
+
+    #ih4vm {
+      padding: 10px;
+      color: rgba(206, 0, 255, 1);
+      font-family: Verdana, Geneva, sans-serif;
+      text-align: center;
+      background-color: rgba(31, 31, 31, 1);
+      border-top-left-radius: 64px;
+      border-top-right-radius: 64px;
+      border-bottom-left-radius: 64px;
+      border-bottom-right-radius: 64px;
+      border-top-style: solid;
+      border-right-style: solid;
+      border-bottom-style: solid;
+      border-left-style: solid;
+    }
+
+    #ivnvk {
+      padding: 10px;
+      color: rgba(206, 0, 255, 1);
+      font-family: Verdana, Geneva, sans-serif;
+      text-align: center;
+      background-color: rgba(31, 31, 31, 1);
+      border-top-left-radius: 64px;
+      border-top-right-radius: 64px;
+      border-bottom-left-radius: 64px;
+      border-bottom-right-radius: 64px;
+      border-top-style: solid;
+      border-right-style: solid;
+      border-bottom-style: solid;
+      border-left-style: solid;
+    }
+
+    #ic9tc {
+      padding: 10px;
+      color: rgba(206, 0, 255, 1);
+      font-family: Verdana, Geneva, sans-serif;
+      text-align: center;
+      background-color: rgba(31, 31, 31, 1);
+      border-top-left-radius: 64px;
+      border-top-right-radius: 64px;
+      border-bottom-left-radius: 64px;
+      border-bottom-right-radius: 64px;
+      border-top-style: solid;
+      border-right-style: solid;
+      border-bottom-style: solid;
+      border-left-style: solid;
+    }
+
+    #i4ptrv {
+      padding: 10px;
+      color: rgba(206, 0, 255, 1);
+      font-family: Verdana, Geneva, sans-serif;
+      text-align: center;
+      background-color: rgba(31, 31, 31, 1);
+      border-top-left-radius: 64px;
+      border-top-right-radius: 64px;
+      border-bottom-left-radius: 64px;
+      border-bottom-right-radius: 64px;
+      border-top-style: solid;
+      border-right-style: solid;
+      border-bottom-style: solid;
+      border-left-style: solid;
+    }
+
+    #i8a2v6 {
+      padding: 10px;
+      color: rgba(206, 0, 255, 1);
+      font-family: Verdana, Geneva, sans-serif;
+      text-align: center;
+      background-color: rgba(31, 31, 31, 1);
+      border-top-left-radius: 64px;
+      border-top-right-radius: 64px;
+      border-bottom-left-radius: 64px;
+      border-bottom-right-radius: 64px;
+      border-top-style: solid;
+      border-right-style: solid;
+      border-bottom-style: solid;
+      border-left-style: solid;
+    }
+
+    #i7ht5g {
+      flex-basis: 50%;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      width: 0px;
+      max-width: 51px;
+    }
+
+    #infgk {
+      color: rgba(228, 228, 228, 1);
+    }
+
+    #igrce {
+      font-size: 60px;
+      color: rgba(145, 145, 145, 1);
+    }
+
+    #iftvx {
+      padding: 10px;
+      color: rgba(206, 0, 255, 1);
+      font-family: Verdana, Geneva, sans-serif;
+      text-align: center;
+      background-color: rgba(31, 31, 31, 1);
+      border-top-left-radius: 64px;
+      border-top-right-radius: 64px;
+      border-bottom-left-radius: 64px;
+      border-bottom-right-radius: 64px;
+      border-top-style: solid;
+      border-right-style: solid;
+      border-bottom-style: solid;
+      border-left-style: solid;
+    }
+
+    #iy2y4 {
+      text-align: center;
+    }
+
+    #igp6c {
+      padding: 10px;
+      color: rgba(113, 113, 113, 1);
+      font-size: 25px;
+      font-family: Arial Black, Gadget, sans-serif;
+    }
+
+    #ixyri {
+      text-align: center;
+    }
+
+    #igtzqx {
+      padding: 10px;
+      color: rgba(113, 113, 113, 1);
+      font-size: 25px;
+      font-family: Arial Black, Gadget, sans-serif;
+    }
+
+    .leaderboard-entry {
+      padding: 10px;
+      color: rgba(206, 0, 255, 1);
+      font-family: Verdana, Geneva, sans-serif;
+      text-align: center;
+      background-color: rgba(31, 31, 31, 1);
+      border-radius: 64px;
+      border: solid;
+    }
+
+    .rank-number {
+      padding: 10px;
+      color: rgba(206, 0, 255, 1);
+      font-family: Verdana, Geneva, sans-serif;
+      text-align: center;
+      background-color: rgba(31, 31, 31, 1);
+      border-radius: 64px;
+      border: solid;
+    }
+
+    #teamNameInput {
+      background-color: rgba(31, 31, 31, 1);
+      border: 2px solid rgba(206, 0, 255, 1);
+      color: rgba(228, 228, 228, 1);
+      font-size: 40px;
+      font-style: italic;
+      text-align: center;
+      padding: 10px;
+      border-radius: 10px;
+      width: 100%;
+      box-sizing: border-box;
+      font-family: Verdana, Geneva, sans-serif;
+    }
+
+    #teamNameInput:focus {
+      outline: none;
+      border-color: rgba(255, 0, 255, 1);
+    }
+  </style>
+</head>
+<body id="imvu">
+  <div id="igp6c">
+    <div id="iy2y4">Escape room | Lulin 2</div>
+  </div>
+  <div data-type-role="flex-row" class="gjs-plg-flex-row" id="i9pu">
+    <div data-type-role="flex-column" class="gjs-plg-flex-column" id="ilwq">
+      <div id="igtzqx">
+        <div id="ixyri">Information</div>
+      </div>
+      <div id="iquw">
+        <b id="ijg2i">Your time:</b>
+        <div id="iviuf">
+          <em id="i7rfu">00:00:00</em>
+        </div>
+      </div>
+      <div id="ipb6e">
+        <b id="int74">Best time (Leaderboard top):</b>
+        <div id="i419f">
+          <em id="itfji">--:--:--</em>
+        </div>
+      </div>
+      <div id="iftvx">
+        <b id="infgk">Team name:</b>
+        <div id="i2vde">
+          <input type="text" id="teamNameInput" value="Team/Player" />
+        </div>
+      </div>
+    </div>
+    <div data-type-role="flex-column" class="gjs-plg-flex-column" id="isq4">
+      <div id="i3m8g">
+        <div id="iuck3">Leaderboard</div>
+      </div>
+      <div data-type-role="flex-row" class="gjs-plg-flex-row" id="i4q6h">
+        <div data-type-role="flex-column" class="gjs-plg-flex-column" id="i7ht5g">
+        </div>
+        <div data-type-role="flex-column" class="gjs-plg-flex-column" id="ieozg">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let timerInterval = null;
+    let elapsedSeconds = 0;
+    let isRunning = false;
+
+    const timerDisplay = document.getElementById('i7rfu');
+    const bestTimeDisplay = document.getElementById('itfji');
+    const teamNameInput = document.getElementById('teamNameInput');
+    const rankColumn = document.getElementById('i7ht5g');
+    const entryColumn = document.getElementById('ieozg');
+
+    function formatTime(seconds) {
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      const s = seconds % 60;
+      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function updateTimerDisplay() {
+      timerDisplay.textContent = formatTime(elapsedSeconds);
+    }
+
+    function startTimer() {
+      if (!isRunning) {
+        isRunning = true;
+        timerInterval = setInterval(() => {
+          elapsedSeconds++;
+          updateTimerDisplay();
+        }, 1000);
+      }
+    }
+
+    function pauseTimer() {
+      if (isRunning) {
+        isRunning = false;
+        clearInterval(timerInterval);
+      }
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      elapsedSeconds = 0;
+      updateTimerDisplay();
+    }
+
+    function getLeaderboard() {
+      const data = localStorage.getItem('escapeRoomLeaderboard');
+      return data ? JSON.parse(data) : [];
+    }
+
+    function saveLeaderboard(leaderboard) {
+      localStorage.setItem('escapeRoomLeaderboard', JSON.stringify(leaderboard));
+      alert(```
+      Feedback:                                        
+            █▀▀▀▀▀▀█ ▄█  ▄▄  ▀▀▄▄   ▀██▄ █▀▀▀▀▀▀█ 
+            █  ███ █ ▄█▀▀█  ▀ ▀█▀▀▀██▄▀█ █ ████ █ 
+            █  ▀▀▀ █ ▄ ██ ▀███ ▄ ▄▄ ▀▄   █ ▀▀▀▀ █ 
+            ▀▀▀▀▀▀▀▀ ▀ ▀▀ █▄▀▄▀ █▄▄█▄█▄▀ ▀▀▀▀▀▀▀▀ 
+            ██████ ██████ █ ██ █    ██  █ █  █ █  
+            ▀▀██▄▄▄███  ▄▄  ▀▀▄▀▀▀▄▀█▀█▀▀▀▄▄█▀▄  
+            ██▄▄▀▄▄█▄█▀▀█  ▀▄█ ▀▀▀█ ▄▀ ▄█▄   ██▀ 
+            ▀▀▄ ▄▄▄▀▀▄██ ▀██▀▀▄   ▀▀▄ ▄▄▀ ▄▄█▀▄  
+            ▄▀▀ ▄▀▄▄█ ▀   █▀▄▄▀ ▀▀▀▀█▄▀▄▄█   ▄▀█▀ 
+            █▀▀ ▀▀ ▄▄▄▄██▄▄  ██▄ ▄▄ ▀████ ▄▄▄▄▀ ▄ 
+            █  ▄▄▄▄▀███▀▀█▀ ▄▀█▀▄██▄▄██▀▀▄▀▀▀▀  █ 
+            █▀▀█▄█▄▀█████▀▄▄▄█  ▄▄▄▀▄ ▄ █ ▀██ ▄▀  
+            █    ▀▀▀▄█▀██ ▄█▀ ▄▀▄▄▄▄ ▀█▀ ▄▀▀▀▄ ▄█ 
+            ▀      ▀▀█▄██ ▀ ▀▀▄▀█  ██▄ █▀▀▀██▀▄   
+            ██▀▀▀▀▀█ ▀▄  █▀ ▄  ▀▄▄▄▄ █▀█ ▀ ██▄ ▀▄ 
+            █  ▄▄▄ █ ▄▀▄▄█  ▀▄▄ █▀▀▀ ▀ █▄▄▄███  █ 
+            █  ███ █ █▄▀▀ ▀██  ▄ ▀▀█▀▄█▄██▄  █▀▀  
+            █▄▄▄▄▄▄█ █▄▀▀ █▀▄▄█▄█▀▀██  ██▄▀▀▀█▀█▀ 
+                                                    
+      ```)
+    }
+
+    function addToLeaderboard() {
+      const teamName = teamNameInput.value.trim() || 'Anonymous';
+      const time = elapsedSeconds;
+      
+      if (time === 0) {
+        alert('Start the timer first!');
+        return;
+      }
+
+      const leaderboard = getLeaderboard();
+      leaderboard.push({ name: teamName, time: time });
+      leaderboard.sort((a, b) => a.time - b.time);
+      saveLeaderboard(leaderboard);
+      
+      renderLeaderboard();
+      resetTimer();
+      alert(`Time saved: ${formatTime(time)} for ${teamName}`);
+    }
+
+    function renderLeaderboard() {
+      const leaderboard = getLeaderboard();
+      
+      rankColumn.innerHTML = '';
+      entryColumn.innerHTML = '';
+
+      leaderboard.forEach((entry, index) => {
+        const rankDiv = document.createElement('div');
+        rankDiv.className = 'rank-number';
+        rankDiv.textContent = `#${index + 1}`;
+        rankColumn.appendChild(rankDiv);
+
+        const entryDiv = document.createElement('div');
+        entryDiv.className = 'leaderboard-entry';
+        entryDiv.innerHTML = `<b style="color: rgba(228, 228, 228, 1);">${entry.name} </b>${formatTime(entry.time)}`;
+        entryColumn.appendChild(entryDiv);
+      });
+
+      if (leaderboard.length > 0) {
+        bestTimeDisplay.textContent = formatTime(leaderboard[0].time);
+      } else {
+        bestTimeDisplay.textContent = '--:--:--';
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        if (isRunning) {
+          pauseTimer();
+        } else {
+          startTimer();
+        }
+      } else if (e.code === 'Enter') {
+        e.preventDefault();
+        if (document.activeElement !== teamNameInput) {
+          addToLeaderboard();
+        }
+      }
+    });
+
+    renderLeaderboard();
+  </script>
+</body>
+</html>
